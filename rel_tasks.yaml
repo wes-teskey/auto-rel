@@ -1,0 +1,142 @@
+test_1_summary:
+  description: >
+    Write a 100 word summary for the reliability data from reliability testing if there
+    are any part failures, including suggested debugs, otherwise write "No part failures found."
+    
+    The seminconductor test coducted is:
+
+    {test_1} 
+    
+    and the failing part (if any) are:
+    
+    {test_1_failures}
+
+    These parts are failing because of they have a higher Idss that the limit of:
+    
+    {Idss_lim}
+    
+    Be very accuracte and concise.
+
+    Make sure to suggest debugs for any failing parts.
+  expected_output: >
+    A 100 word summary of the reliability data from the reliability testing, including debugs
+    for any failing parts. If there are no part failures, the output should be 
+    "No part failures found."
+  async_execution: true
+
+test_2_summary:
+  description: >
+    Write a 100 word summary for the reliability data from reliability testing if there
+    are any part failures, including suggested debugs, otherwise write "No part failures found."
+    
+    The seminconductor test coducted is:
+
+    {test_2} 
+    
+    and the failing part (if any) are:
+    
+    {test_2_failures}
+
+    These parts are failing because of they have a higher Idss that the limit of:
+
+    {Idss_lim}
+    
+    Be very accuracte and concise.
+
+    Make sure to suggest debugs for any failing parts.
+  expected_output: >
+    A 100 word summary of the reliability data from the reliability testing, including debugs
+    for any failing parts. If there are no part failures, the output should be 
+    "No part failures found."
+  async_execution: true
+
+test_3_summary:
+  description: >
+    Write a 100 word summary for the reliability data from reliability testing if there
+    are any part failures, including suggested debugs, otherwise write "No part failures found."
+    
+    The seminconductor test coducted is:
+
+    {test_3} 
+    
+    and the failing part (if any) are:
+    
+    {test_3_failures}
+
+    These parts are failing because of they have a higher Idss that the limit of:
+
+    {Idss_lim}
+    
+    Be very accuracte and concise.
+
+    Make sure to suggest debugs for any failing parts.
+  expected_output: >
+    A 100 word summary of the reliability data from the reliability testing, including debugs
+    for any failing parts. If there are no part failures, the output should be 
+    "No part failures found."
+  async_execution: false
+
+report_summary:
+  description: >
+    Write a 200 word summary for the reliability data from reliability testing. Combine
+    all reports from the senior reliability engineers into an executive summary for the CEO.
+
+    MAKE SURE TO INCLUDE ALL FAILING PARTS IN THE SUMMARY.
+
+    Give feedback to the senior reliability engineers if their summary is not 
+    accurate, concise, or has other errors.
+    
+    Be very accuracte and concise yourself.
+
+    Make sure to suggest debugs for any failing parts.
+
+    Here are the details of all failing parts that the senior reliability engineers should have
+    included in their summaries:
+
+    --
+    The seminconductor test coducted is:
+
+    {test_1} 
+    
+    and the failing part (if any) are:
+    
+    {test_1_failures}
+
+    These parts are failing because of they have a higher Idss that the limit of:
+
+    {Idss_lim}
+
+    --
+    The seminconductor test coducted is:
+
+    {test_2} 
+    
+    and the failing part (if any) are:
+    
+    {test_2_failures}
+
+    These parts are failing because of they have a higher Idss that the limit of:
+
+    {Idss_lim}
+
+    --
+    
+    --
+    The seminconductor test coducted is:
+
+    {test_3} 
+    
+    and the failing part (if any) are:
+    
+    {test_3_failures}
+
+    These parts are failing because of they have a higher Idss that the limit of:
+
+    {Idss_lim}
+
+    MAKE SURE TO INCLUDE ALL FAILING PARTS IN THE SUMMARY.
+  expected_output: >
+    A 200 word summary of the reliability data from the reliability testing, including debugs
+    for any failing parts. This summary should be an executive summary for the CEO.
+    MAKE SURE TO INCLUDE ALL FAILING PARTS IN THE SUMMARY.
+  async_execution: false
