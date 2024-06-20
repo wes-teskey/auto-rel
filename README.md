@@ -10,7 +10,7 @@ Before you begin, ensure you have met the following requirements:
 ## Setting Up a Virtual Environment
 
 1. **Navigate to the project directory:**
-cd path/to/your/project
+cd path\to\your\project
 
 2. **Create and activate virtual environment (example shown for windows):**
 python -m venv venv
@@ -49,9 +49,9 @@ After the installation is complete, verify the installation
 
 ## Description of Key Directories and Files
 
-- **`data/`**: Contains all data-related files.
-- **`src/`**: Contains the source code of the project.
-- **`venv/`**: Contains the virtual environment for the project.
+- **`data\`**: Contains all data-related files.
+- **`src\`**: Contains the source code of the project.
+- **`venv\`**: Contains the virtual environment for the project.
 - **`.env`**: Contains environment variables, including API keys.
 
 ### Environment Variables
@@ -61,9 +61,9 @@ OPENAI_API_KEY: The API key for accessing OpenAI services.
 
 Caution: Using the OPENAI_API_KEY can be really expensive. Please be mindful of your usage to avoid unexpected costs.
 
-### Creating the `data/` Directory
+### Creating the `data\` Directory
 
-Before running the project, ensure that the `data/` directory is created at the same level as the `src/` directory
+Before running the project, ensure that the `data\` directory is created at the same level as the `src\` directory
 
 ## Usage
 Run main.py
