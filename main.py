@@ -8,6 +8,9 @@ from crewai import Agent, Task, Crew, Process
 from crewai.project import CrewBase, agent, crew, task
 from dotenv import load_dotenv
 from langchain.chat_models import ChatOpenAI
+from pptx import Presentation
+from pptx.util import Inches, Pt
+from pptx.dml.color import RGBColor
 
 load_dotenv()
 
@@ -43,6 +46,7 @@ class RelReportCrew():
         return Task(
             config = self.tasks_config['test_1_summary'],
             agent = self.rel_engineer(),
+            context=[],
             output_file = self.test_1_file_name,
             )
     
@@ -51,6 +55,7 @@ class RelReportCrew():
         return Task(
             config = self.tasks_config['test_2_summary'],
             agent = self.rel_engineer(),
+            context=[],
             output_file = self.test_2_file_name,
             )
     
@@ -59,6 +64,7 @@ class RelReportCrew():
         return Task(
             config = self.tasks_config['test_3_summary'],
             agent = self.rel_engineer(),
+            context=[],
             output_file = self.test_3_file_name,
             )
         
@@ -67,6 +73,7 @@ class RelReportCrew():
         return Task(
             config = self.tasks_config['report_summary'],
             agent = self.rel_manager(),
+            context=[self.test_1_summary(), self.test_2_summary(), self.test_3_summary()],
             output_file = self.report_summary_file_name,
             )
     
@@ -166,8 +173,9 @@ def find_failing_parts(file_path, column_names, Idss_lim):
     
     def generate_failure_string(die_col, idss_col, limit):
         failures = df[df[idss_col] > limit]
-        failure_string = "\n".join(f"{int(row[die_col])} {row[idss_col]:.5f}" 
+        failure_string = "\n".join(f"DIE ID: {int(row[die_col])}    Idss: {row[idss_col]:.5f}" 
                                    for idx, row in failures.iterrows())
+        print(failure_string)
         return failure_string
     
     test_1_failures = generate_failure_string(column_names[0], column_names[1], Idss_lim)
@@ -176,6 +184,89 @@ def find_failing_parts(file_path, column_names, Idss_lim):
     
     return test_1_failures, test_2_failures, test_3_failures
 
+def create_pptx_report(report_title, report_subtitle, summary_report, column_names,
+                       test_1_report, test_2_report, test_3_report, 
+                       plot_1_file, plot_2_file, plot_3_file, sub_dir):
+    # Create a presentation object
+    prs = Presentation()
+
+    # Title Slide
+    title_slide_layout = prs.slide_layouts[0]
+    slide = prs.slides.add_slide(title_slide_layout)
+    title = slide.shapes.title
+    subtitle = slide.placeholders[1]
+
+    title.text = report_title
+    subtitle.text = report_subtitle
+
+    # Executive Summary Slide
+    executive_summary_layout = prs.slide_layouts[1]
+    slide = prs.slides.add_slide(executive_summary_layout)
+    title = slide.shapes.title
+    title.text = "Executive Summary"
+
+    # Read the summary report text from file
+    with open(summary_report, "r") as file:
+        summary_text = file.read()
+
+    text_box = slide.shapes.placeholders[1].text_frame
+    text_box.text = summary_text
+    for paragraph in text_box.paragraphs:
+        for run in paragraph.runs:
+            run.font.size = Pt(18)  #the text size
+
+    # Function to add image and wrapped text to a slide
+    def add_image_and_text(slide, img_path, text, left, top, height):
+        slide.shapes.add_picture(img_path, left, top, height=height)
+        
+        text_box = slide.shapes.add_textbox(left - 1.5, Inches(5.2), Inches(8.0), Inches(1.0))
+        text_frame = text_box.text_frame
+        text_frame.text = text
+        text_frame.word_wrap = True  # Enable word wrap
+        for paragraph in text_frame.paragraphs:
+            for run in paragraph.runs:
+                run.font.size = Pt(12)  # Set text size
+                run.font.color.rgb = RGBColor(0, 0, 0)  # Set text color to black
+
+    # Test #1 Slide
+    slide_1_layout = prs.slide_layouts[5]
+    slide = prs.slides.add_slide(slide_1_layout)
+    title = slide.shapes.title
+    title.text = f"{column_names[1].split(' ', 1)[0]} Test Results"
+
+    # Add image for Test #1
+    img_path = plot_1_file
+    with open(test_1_report, "r") as file:
+        slide_1_text = file.read()
+    add_image_and_text(slide, img_path, slide_1_text, Inches(2.5), Inches(1.5), Inches(3.5))
+
+    # Test #2 Slide
+    slide_2_layout = prs.slide_layouts[5]
+    slide = prs.slides.add_slide(slide_2_layout)
+    title = slide.shapes.title
+    title.text = f"{column_names[3].split(' ', 1)[0]} Test Results"
+
+    # Add image for Test #2
+    img_path = plot_2_file
+    with open(test_2_report, "r") as file:
+        slide_2_text = file.read()
+    add_image_and_text(slide, img_path, slide_2_text, Inches(2.5), Inches(1.5), Inches(3.5))
+
+    # Test #3 Slide
+    slide_3_layout = prs.slide_layouts[5]
+    slide = prs.slides.add_slide(slide_3_layout)
+    title = slide.shapes.title
+    title.text = f"{column_names[5].split(' ', 1)[0]} Test Results"
+
+    # Add image for Test #3
+    img_path = plot_3_file
+    with open(test_3_report, "r") as file:
+        slide_3_text = file.read()
+    add_image_and_text(slide, img_path, slide_3_text, Inches(2.5), Inches(1.5), Inches(3.5))
+
+    # Save the presentation
+    pptx_file = path_to_save_file(sub_dir, report_title + '.pptx', False)
+    prs.save(pptx_file)
 
 def main():
     print("\n\n## Welcome to the Auto REL Report Generator ##")
@@ -185,11 +276,15 @@ def main():
 
     Idss_lim = 1  # Set the limit for Idss values
 
+    report_title = "BMXD-456 Semiconductor Summary Report"
+    report_subtitle = "The AI Semiconductor Company"
+
     # Call the create_sample_data function
     file_path, column_names = create_sample_data(sub_dir=sub_dir)  
 
     # Call the plot_idss_values function
-    p1_file, p2_file, p3_file = plot_idss_values(file_path, column_names, sub_dir, Idss_lim) 
+    plot_1_file, plot_2_file, plot_3_file = plot_idss_values(file_path, column_names, 
+                                                             sub_dir, Idss_lim) 
 
     test_1_failures, test_2_failures, test_3_failures =  find_failing_parts(file_path, 
                                                                             column_names, 
@@ -211,6 +306,11 @@ def main():
               'Idss_lim': Idss_lim}
     RelReportCrew(test_1_report, test_2_report, test_3_report, summary_report, llm
                   ).crew().kickoff(inputs=inputs)
+    
+    # Call the create_pptx_report function
+    create_pptx_report(report_title, report_subtitle, summary_report, column_names,
+                       test_1_report, test_2_report, test_3_report, 
+                       plot_1_file, plot_2_file, plot_3_file, sub_dir)
 
 if __name__ == "__main__":
     main()  # Call the main function
