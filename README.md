@@ -24,6 +24,8 @@ pip install "crewai[tools]"
 
 pip install reliability
 
+pip install python-pptx
+
 ## Windows Users: Resolving Microsoft Visual C++ 14.0 Build Tools Error
 
 If you encounter an error related to chroma not being installed, 
@@ -53,11 +55,9 @@ After the installation is complete, verify the installation
 - **`.env`**: Contains environment variables, including API keys.
 
 ### Environment Variables
-The .env file in the root directory contains the following environment variables:
+The .env file in the root directory contains the following environment variable:
 
 OPENAI_API_KEY: The API key for accessing OpenAI services.
-
-TAVILY_API_KEY: The API key for accessing Tavily services.
 
 Caution: Using the OPENAI_API_KEY can be really expensive. Please be mindful of your usage to avoid unexpected costs.
 
